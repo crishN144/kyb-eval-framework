@@ -1,0 +1,2287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYB Adversarial Evaluation Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+            --motion-fast: 180ms var(--ease-premium);
+            --motion-med: 220ms var(--ease-premium);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== HEADER ===== */
+        .console-header {
+            background:
+                radial-gradient(circle at 15% 0%, rgba(124,58,237,0.10), transparent 35%),
+                radial-gradient(circle at 85% 0%, rgba(59,130,246,0.08), transparent 30%),
+                linear-gradient(180deg, rgba(16,18,24,0.96), rgba(13,17,23,0.88));
+            backdrop-filter: blur(18px) saturate(130%);
+            -webkit-backdrop-filter: blur(18px) saturate(130%);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 10px 30px rgba(0,0,0,0.2);
+            padding: 24px 32px;
+            position: relative;
+        }
+
+        .console-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(124,58,237,0.00),
+                rgba(124,58,237,0.55),
+                rgba(59,130,246,0.55),
+                rgba(124,58,237,0.00)
+            );
+            opacity: 0.8;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .console-title {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+        }
+
+        .console-subtitle {
+            font-size: 13px;
+            color: rgba(230,237,243,0.62);
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .console-meta {
+            display: flex;
+            gap: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #484f58;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-value {
+            color: #7d8590;
+            font-weight: 500;
+        }
+
+        /* ===== KEY FINDINGS ===== */
+        .findings-strip {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 32px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .finding-pill {
+            background: linear-gradient(
+                180deg,
+                rgba(22, 27, 34, 0.84) 0%,
+                rgba(18, 22, 28, 0.76) 100%
+            );
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 8px 24px rgba(0,0,0,0.18);
+            border-radius: 8px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            transition:
+                transform var(--motion-med),
+                box-shadow var(--motion-med),
+                border-color var(--motion-med),
+                background var(--motion-med),
+                opacity var(--motion-med);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .finding-pill::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(255,255,255,0.02) 18%,
+                rgba(255,255,255,0.00) 40%
+            );
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .finding-pill:hover {
+            transform: translateY(-3px) scale(1.005);
+            border-color: rgba(124,58,237,0.22);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 14px 28px rgba(0,0,0,0.24),
+                0 0 0 1px rgba(124,58,237,0.04);
+        }
+
+        .finding-excellent {
+            border-left: 3px solid #10b981;
+        }
+
+        .finding-good {
+            border-left: 3px solid #3b82f6;
+        }
+
+        .finding-watch {
+            border-left: 3px solid #f59e0b;
+        }
+
+        .finding-warning {
+            border-left: 3px solid #f97316;
+        }
+
+        .finding-icon {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .finding-text {
+            font-weight: 500;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px 40px;
+        }
+
+        .section {
+            background: linear-gradient(
+                180deg,
+                rgba(22, 27, 34, 0.84) 0%,
+                rgba(18, 22, 28, 0.76) 100%
+            );
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 8px 24px rgba(0,0,0,0.18);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition:
+                transform var(--motion-med),
+                box-shadow var(--motion-med),
+                border-color var(--motion-med),
+                background var(--motion-med),
+                opacity var(--motion-med);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .section::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(255,255,255,0.02) 18%,
+                rgba(255,255,255,0.00) 40%
+            );
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .section:hover {
+            transform: translateY(-3px) scale(1.005);
+            border-color: rgba(124,58,237,0.22);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 14px 28px rgba(0,0,0,0.24),
+                0 0 0 1px rgba(124,58,237,0.04);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: rgba(230,237,243,0.52);
+            font-weight: 400;
+        }
+
+        /* ===== METRIC CARDS V3 ===== */
+        .metrics-grid-v3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card-v3 {
+            background: linear-gradient(
+                180deg,
+                rgba(22, 27, 34, 0.84) 0%,
+                rgba(18, 22, 28, 0.76) 100%
+            );
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 8px 24px rgba(0,0,0,0.18);
+            border-radius: 12px;
+            padding: 18px;
+            transition:
+                transform var(--motion-med),
+                box-shadow var(--motion-med),
+                border-color var(--motion-med),
+                background var(--motion-med),
+                opacity var(--motion-med);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card-v3::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            border-radius: 12px 12px 0 0;
+            opacity: 0;
+            transition: opacity var(--motion-med);
+        }
+
+        .metric-card-v3::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(255,255,255,0.02) 18%,
+                rgba(255,255,255,0.00) 40%
+            );
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .metric-card-v3:hover {
+            transform: translateY(-3px) scale(1.005);
+            border-color: rgba(124,58,237,0.22);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 14px 28px rgba(0,0,0,0.24),
+                0 0 0 1px rgba(124,58,237,0.04);
+        }
+
+        .metric-card-v3:hover::before {
+            opacity: 1;
+        }
+
+        .metric-primary::before { background: #7c3aed; }
+        .metric-success::before { background: #10b981; }
+        .metric-info::before { background: #3b82f6; }
+        .metric-warning::before { background: #f59e0b; }
+        .metric-danger::before { background: #f97316; }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .metric-label-v3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #7d8590;
+            font-weight: 500;
+        }
+
+        .metric-status {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .status-excellent {
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .status-good {
+            background: rgba(59, 130, 246, 0.12);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
+        .status-fair {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .status-needs-review {
+            background: rgba(249, 115, 22, 0.12);
+            color: #f97316;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+        }
+
+        .metric-value-v3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #e6edf3;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .metric-sublabel-v3 {
+            font-size: 11px;
+            color: #484f58;
+            margin-bottom: 10px;
+        }
+
+        .metric-progress {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .metric-progress-bar {
+            height: 100%;
+            background: #58a6ff;
+            border-radius: 2px;
+            transition: width 0.6s ease;
+        }
+
+        /* ===== ATTACK ROBUSTNESS STRIP ===== */
+        .robustness-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .robustness-tile {
+            background: linear-gradient(
+                180deg,
+                rgba(22, 27, 34, 0.84) 0%,
+                rgba(18, 22, 28, 0.76) 100%
+            );
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 8px 24px rgba(0,0,0,0.18);
+            border-radius: 8px;
+            padding: 14px;
+            transition:
+                transform var(--motion-med),
+                box-shadow var(--motion-med),
+                border-color var(--motion-med),
+                background var(--motion-med),
+                opacity var(--motion-med);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .robustness-tile::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.06) 0%,
+                rgba(255,255,255,0.02) 18%,
+                rgba(255,255,255,0.00) 40%
+            );
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .robustness-tile:hover {
+            transform: translateY(-3px) scale(1.005);
+            border-color: rgba(124,58,237,0.22);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 14px 28px rgba(0,0,0,0.24),
+                0 0 0 1px rgba(124,58,237,0.04);
+        }
+
+        .robustness-excellent {
+            border-left: 3px solid #10b981;
+        }
+
+        .robustness-good {
+            border-left: 3px solid #3b82f6;
+        }
+
+        .robustness-warning {
+            border-left: 3px solid #f97316;
+        }
+
+        .robustness-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .robustness-icon {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .robustness-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #7d8590;
+        }
+
+        .robustness-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+
+        .robustness-count {
+            font-size: 10px;
+            color: #484f58;
+            margin-bottom: 8px;
+        }
+
+        .robustness-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .robustness-bar-fill {
+            height: 100%;
+            background: #58a6ff;
+            border-radius: 2px;
+        }
+
+        /* ===== CASE EXPLORER V3 ===== */
+        .case-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            color: #7d8590;
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .filter-pill {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #7d8590;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition:
+                transform var(--motion-med),
+                background var(--motion-med),
+                border-color var(--motion-med),
+                box-shadow var(--motion-med),
+                color var(--motion-med);
+        }
+
+        .filter-pill:hover {
+            transform: translateY(-2px) scale(1.005);
+            border-color: rgba(124,58,237,0.22);
+            background: rgba(124,58,237,0.08);
+            box-shadow:
+                0 8px 18px rgba(0,0,0,0.18),
+                0 0 0 1px rgba(124,58,237,0.04);
+            color: #e6edf3;
+        }
+
+        .filter-active {
+            background: linear-gradient(
+                180deg,
+                rgba(124,58,237,0.90),
+                rgba(99,102,241,0.82)
+            );
+            border-color: rgba(255,255,255,0.10);
+            color: #fff;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.10),
+                0 8px 18px rgba(124,58,237,0.22);
+        }
+
+        .case-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .case-cards-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .case-cards-grid::-webkit-scrollbar-track {
+            background: #0d1117;
+            border-radius: 3px;
+        }
+
+        .case-cards-grid::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 3px;
+        }
+
+        .case-card-v3 {
+            background: linear-gradient(
+                180deg,
+                rgba(13, 17, 23, 0.84) 0%,
+                rgba(10, 14, 19, 0.76) 100%
+            );
+            backdrop-filter: blur(14px) saturate(135%);
+            -webkit-backdrop-filter: blur(14px) saturate(135%);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.04),
+                0 8px 24px rgba(0,0,0,0.18);
+            border-radius: 8px;
+            padding: 14px;
+            transition:
+                transform var(--motion-med),
+                box-shadow var(--motion-med),
+                border-color var(--motion-med),
+                background var(--motion-med),
+                opacity var(--motion-med);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-card-v3::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.04) 0%,
+                rgba(255,255,255,0.01) 18%,
+                rgba(255,255,255,0.00) 40%
+            );
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .case-card-v3:hover {
+            transform: translateY(-3px) scale(1.005);
+            border-color: rgba(124,58,237,0.22);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.05),
+                0 14px 28px rgba(0,0,0,0.24),
+                0 0 0 1px rgba(124,58,237,0.04);
+        }
+
+        .status-pass {
+            border-left: 3px solid #10b981;
+        }
+
+        .status-fail {
+            border-left: 3px solid #f97316;
+        }
+
+        .case-card-header-v3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .case-id-v3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .case-status-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .case-status-badge.status-pass {
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-left-width: 1px;
+        }
+
+        .case-status-badge.status-fail {
+            background: rgba(249, 115, 22, 0.12);
+            color: #f97316;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            border-left-width: 1px;
+        }
+
+        .case-card-body-v3 {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .case-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+
+        .case-key {
+            color: #484f58;
+            font-weight: 500;
+        }
+
+        .case-value {
+            color: #7d8590;
+            font-weight: 500;
+        }
+
+        .case-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .category-success {
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .category-danger {
+            background: rgba(249, 115, 22, 0.12);
+            color: #f97316;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+        }
+
+        .category-warning {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        /* ===== ATTACK PATTERNS ===== */
+        .attack-patterns {
+            padding: 0;
+        }
+
+        .attack-summary {
+            font-size: 14px;
+            color: #e6edf3;
+            line-height: 1.6;
+            margin: 0 0 20px 0;
+        }
+
+        .pattern-group {
+            margin-bottom: 16px;
+        }
+
+        .pattern-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #10b981;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .pattern-label-vulnerable {
+            color: #f59e0b;
+        }
+
+        .pattern-list {
+            font-size: 13px;
+            color: #7d8590;
+            line-height: 1.8;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(230,237,243,0.32);
+            font-size: 11px;
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: rgba(230,237,243,0.42);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #7c3aed;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="console-header">
+        <div class="header-content">
+            <h1 class="console-title">KYB Adversarial Evaluation Console</h1>
+            <p class="console-subtitle">Interactive robustness analysis for KYB verification systems</p>
+            <div class="console-meta">
+                <div class="meta-item">
+                    <span>Cases:</span>
+                    <span class="meta-value">50</span>
+                </div>
+                <div class="meta-item">
+                    <span>Accuracy:</span>
+                    <span class="meta-value">72.0%</span>
+                </div>
+                <div class="meta-item">
+                    <span>Framework:</span>
+                    <span class="meta-value">arXiv:2601.14479</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KEY FINDINGS -->
+    <div class="findings-strip">
+            <div class="finding-pill finding-warning">
+                <span class="finding-icon">⚠</span>
+                <span class="finding-text">70% adversarial blocked</span>
+            </div>
+            
+            <div class="finding-pill finding-watch">
+                <span class="finding-icon">→</span>
+                <span class="finding-text">Edge cases remain the weakest path</span>
+            </div>
+            
+            <div class="finding-pill finding-watch">
+                <span class="finding-icon">!</span>
+                <span class="finding-text">1 legitimate case wrongly escalated</span>
+            </div>
+            </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- METRIC CARDS -->
+        <div class="metrics-grid-v3">
+            <div class="metric-card-v3 metric-primary">
+                <div class="metric-header">
+                    <span class="metric-label-v3">Overall Accuracy</span>
+                    <span class="metric-status status-fair">→ Fair</span>
+                </div>
+                <div class="metric-value-v3">72.0%</div>
+                <div class="metric-sublabel-v3">36/50 cases correct</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" style="width: 72.0%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card-v3 metric-success">
+                <div class="metric-header">
+                    <span class="metric-label-v3">Adversarial Rejection</span>
+                    <span class="metric-status status-needs-review">⚠ Needs review</span>
+                </div>
+                <div class="metric-value-v3">70.0%</div>
+                <div class="metric-sublabel-v3">14/20 fraud-like cases blocked</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" style="width: 70.0%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card-v3 metric-info">
+                <div class="metric-header">
+                    <span class="metric-label-v3">Legitimate Approval</span>
+                    <span class="metric-status status-excellent">✓ Excellent</span>
+                </div>
+                <div class="metric-value-v3">95.0%</div>
+                <div class="metric-sublabel-v3">19/20 valid businesses approved</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" style="width: 95.0%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card-v3 metric-warning">
+                <div class="metric-header">
+                    <span class="metric-label-v3">Edge Case Escalation</span>
+                    <span class="metric-status status-needs-review">⚠ Needs review</span>
+                </div>
+                <div class="metric-value-v3">30.0%</div>
+                <div class="metric-sublabel-v3">3/10 ambiguous cases sent for review</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" style="width: 30.0%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card-v3 metric-danger">
+                <div class="metric-header">
+                    <span class="metric-label-v3">False Positive Rate</span>
+                    <span class="metric-status status-excellent">✓ Excellent</span>
+                </div>
+                <div class="metric-value-v3">3.3%</div>
+                <div class="metric-sublabel-v3">legitimate cases wrongly rejected</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" style="width: 3.3333333333333335%"></div>
+                </div>
+            </div>
+            
+            <div class="metric-card-v3 metric-danger">
+                <div class="metric-header">
+                    <span class="metric-label-v3">False Negative Rate</span>
+                    <span class="metric-status status-needs-review">⚠ Needs review</span>
+                </div>
+                <div class="metric-value-v3">30.0%</div>
+                <div class="metric-sublabel-v3">fraudulent cases that slipped through</div>
+                <div class="metric-progress">
+                    <div class="metric-progress-bar" style="width: 30.0%"></div>
+                </div>
+            </div>
+            </div>
+
+        <!-- DECISION FLOW -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Decision Flow</h2>
+                <p class="section-subtitle">How cases move from input category through expected action to final decision. Most adversarial cases resolve correctly; edge cases create the main friction.</p>
+            </div>
+            <div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="33ac00ff-ec21-4edc-8124-c2a925de318c" class="plotly-graph-div" style="height:450px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("33ac00ff-ec21-4edc-8124-c2a925de318c")) {                    Plotly.newPlot(                        "33ac00ff-ec21-4edc-8124-c2a925de318c",                        [{"link":{"color":["rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(16, 185, 129, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(249, 115, 22, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(16, 185, 129, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(249, 115, 22, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(249, 115, 22, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(249, 115, 22, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(16, 185, 129, 0.25)","rgba(124, 58, 237, 0.2)","rgba(59, 130, 246, 0.2)","rgba(249, 115, 22, 0.25)"],"hovertemplate":"%{source.label} \u2192 %{target.label}\u003cbr\u003eCount: %{value}\u003cextra\u003e\u003c\u002fextra\u003e","source":[0,1,2,4,5,6,8,9,6,4,5,2,8,9,10,8,9,2,4,5,10,0,1,10],"target":[1,2,3,5,6,7,9,6,3,5,2,7,9,10,7,9,2,7,5,10,3,1,10,7],"value":[19,19,19,1,1,1,14,14,14,6,6,6,1,1,1,5,5,5,3,3,3,1,1,1]},"node":{"color":["#10b981","#3b82f6","#10b981","#10b981","#f59e0b","#3b82f6","#3b82f6","#f97316","#f97316","#3b82f6","#3b82f6"],"customdata":["Legitimate","Expected: Approve","Predicted: Legitimate","Pass","Edge Case","Expected: Escalate","Predicted: Fraudulent","Fail","Adversarial","Expected: Reject","Predicted: Ambiguous"],"hovertemplate":"%{label}\u003cbr\u003eCases: %{value}\u003cextra\u003e\u003c\u002fextra\u003e","label":["Legitimate","Expected: Approve","Predicted: Legitimate","Pass","Edge Case","Expected: Escalate","Predicted: Fraudulent","Fail","Adversarial","Expected: Reject","Predicted: Ambiguous"],"line":{"color":"#30363d","width":1},"pad":20,"thickness":18},"type":"sankey"}],                        {"template":{},"font":{"family":"Inter, sans-serif","size":11,"color":"#E6EDF3"},"hoverlabel":{"font":{"family":"Inter, sans-serif","size":12,"color":"#E6EDF3"},"bgcolor":"rgba(18,22,28,0.92)","bordercolor":"rgba(255,255,255,0.08)"},"margin":{"l":24,"r":24,"t":20,"b":24},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","height":450,"hovermode":"closest"},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+        </div>
+
+        <!-- ATTACK PATTERNS -->
+        <div class="section"><div class="section-header"><h2 class="section-title">Attack patterns</h2></div>
+        <div class="attack-patterns">
+            <p class="attack-summary">Most structural attacks are blocked consistently. Failures cluster around timeliness, naming variation, and business-state checks.</p>
+
+            <div class="pattern-group">
+                <div class="pattern-label">Robust against</div>
+                <div class="pattern-list">Address Mismatch · Fake Website · Blank Document · Partial Document · Postcode Manipulation</div>
+            </div>
+
+            <div class="pattern-group">
+                <div class="pattern-label pattern-label-vulnerable">Still vulnerable to</div>
+                <div class="pattern-list">Dormant Company · Name Variation · Stale Document · Recent Website</div>
+            </div>
+        </div>
+        </div>
+
+        <!-- CASE EXPLORER -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Case Explorer</h2>
+                <p class="section-subtitle">Individual test cases with expected vs actual outcomes.</p>
+            </div>
+            <div class="case-explorer-v3">
+<div class="case-filters">
+<span class="filter-label">Filter:</span>
+<button class="filter-pill filter-active" data-category="all">All Cases</button>
+<button class="filter-pill" data-category="legitimate">Legitimate</button>
+<button class="filter-pill" data-category="adversarial">Adversarial</button>
+<button class="filter-pill" data-category="edge_case">Edge Cases</button>
+</div>
+<div class="case-cards-grid">
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-016</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-011</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-003</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-017</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-012</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-020</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-014</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-015</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-018</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-006</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-019</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-008</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-001</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-005</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-010</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-013</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-009</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Ambiguous</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-004</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-002</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="legitimate">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">LEG-007</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-success">Legitimate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Approve</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-002</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-009</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-008</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Ambiguous</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-003</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Ambiguous</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-006</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-004</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-007</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-005</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-010</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="edge_case">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">EDGE-001</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-warning">Edge Case</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">N/A</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Escalate</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Ambiguous</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-009</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Address Mismatch</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-008</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Address Mismatch</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-007</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Address Mismatch</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-019</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Dormant Company</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Ambiguous</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-004</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Fake Website</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-016</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Name Variation</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-002</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Blank Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-001</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Blank Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-010</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Partial Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-003</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Blank Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-017</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Postcode Manipulation</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-018</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Postcode Manipulation</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-014</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Stale Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-012</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Partial Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-013</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Stale Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-006</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Fake Website</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-015</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Name Variation</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-fail" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-020</code>
+                        <span class="case-status-badge status-fail">✗</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Recent Website</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-011</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Partial Document</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="case-card-v3 status-pass" data-category="adversarial">
+                    <div class="case-card-header-v3">
+                        <code class="case-id-v3">ADV-005</code>
+                        <span class="case-status-badge status-pass">✓</span>
+                    </div>
+                    <div class="case-card-body-v3">
+                        <div class="case-row">
+                            <span class="case-key">Category</span>
+                            <span class="case-badge category-danger">Adversarial</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Attack</span>
+                            <span class="case-value">Fake Website</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Expected</span>
+                            <span class="case-value">Reject</span>
+                        </div>
+                        <div class="case-row">
+                            <span class="case-key">Predicted</span>
+                            <span class="case-value">Fraudulent</span>
+                        </div>
+                    </div>
+                </div>
+                
+</div>
+</div>
+        </div>
+    </div>
+
+    <script>
+        // Simple filter functionality
+        document.querySelectorAll('.filter-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                // Update active state
+                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('filter-active'));
+                pill.classList.add('filter-active');
+
+                // Filter cards
+                const category = pill.dataset.category;
+                document.querySelectorAll('.case-card-v3').forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
