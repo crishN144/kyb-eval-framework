@@ -1,6 +1,6 @@
 # KYB Adversarial Evaluation Framework
 
-Systematic testing harness for KYB/AML compliance AI — measuring robustness against adversarial attacks, edge cases, and ambiguous scenarios.
+Systematic testing harness for KYB/AML compliance AI, measuring robustness against adversarial attacks, edge cases, and ambiguous scenarios.
 
 **Methodology:** Based on evaluation approach from [arXiv:2601.14479](https://arxiv.org/abs/2601.14479), applied to financial compliance.
 
@@ -112,7 +112,7 @@ See `src/evaluator.py` for both verifier implementations.
 - **Rule-based**: Hard cutoffs (if address mismatch → reject)
 - **Scoring-based**: Aggregated risk score with thresholds (reject ≥40, escalate ≥8)
 
-**No external APIs required** — framework tests decision logic, not OCR or LLM capabilities. Test cases are structured JSON, not images.
+**No external APIs required**  framework tests decision logic, not OCR or LLM capabilities. Test cases are structured JSON, not images.
 
 ---
 
