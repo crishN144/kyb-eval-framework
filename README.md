@@ -158,30 +158,13 @@ kyb-eval-framework/
 
 ---
 
-## Background
-
-Built by [Crish Nagarkar](https://linkedin.com/in/crishnagarkar/), Research Assistant in Large Language Models at University of Leeds.
-
-**Research:**
-- [arXiv:2601.14479](https://arxiv.org/abs/2601.14479): LLM-as-judge evaluation methodology (34% improvement over traditional metrics)
-
-**Production experience:**
-- Evaluation framework for 4,000+ court judgments (AILES legal AI)
-- RAG retrieval optimization (25% → 80% accuracy)
-- Fine-tuning Mistral-Nemo, LLaMA-3, DeepSeek models
-
-**Expertise:** LLM evaluation, systematic testing, failure mode analysis
-
----
-
 ## Contact
 
 **Crish Nagarkar**
 Research Assistant, University of Leeds School of Mathematics
 
-- Email: crishnagarkar132@gmail.com
+- Email: crishnagarkar@proton.me
 - LinkedIn: [linkedin.com/in/crishnagarkar](https://linkedin.com/in/crishnagarkar/)
-- Publication: [arXiv:2601.14479](https://arxiv.org/abs/2601.14479)
 
 ---
 
