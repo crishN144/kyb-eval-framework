@@ -10,7 +10,7 @@ Systematic testing harness for KYB/AML compliance AI, measuring robustness again
 
 KYB verification systems must reliably approve legitimate businesses, reject fraud, and escalate ambiguous cases for human review. Failures result in FCA fines, regulatory penalties, and reputational damage.
 
-**Challenge:** Traditional ML metrics (accuracy, F1) don't capture robustness failures — adversarial attacks, data manipulation, and edge cases that production systems encounter daily.
+**Challenge:** Traditional ML metrics (accuracy, F1) don't capture robustness failures, adversarial attacks, data manipulation, and edge cases that production systems encounter daily.
 
 This framework tests decision quality under realistic adversarial pressure.
 
