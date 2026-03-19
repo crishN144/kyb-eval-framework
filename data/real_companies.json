@@ -1,0 +1,470 @@
+[
+  {
+    "company_number": "11194029",
+    "company_name": "TECHNOLOGY LONDON LIMITED",
+    "address": {
+      "address_line_1": "11 Dalmeyer Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "NW10 2XA"
+    },
+    "date_of_creation": "2018-02-07",
+    "sic_codes": [
+      "46180",
+      "96090"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "15958184",
+    "company_name": "CONSULTING LONDON LTD",
+    "address": {
+      "address_line_1": "Flat 6, 11 Highfield Close",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "SE13 6UW"
+    },
+    "date_of_creation": "2024-09-16",
+    "sic_codes": [
+      "70229"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "09791169",
+    "company_name": "ADVANCED GLOBAL CONSULTING - LONDON LTD",
+    "address": {
+      "address_line_1": "C/O Michael Filiou Ltd Salisbury House",
+      "address_line_2": "81 High Street",
+      "country": "United Kingdom",
+      "locality": "Potters Bar",
+      "postal_code": "EN6 5AS",
+      "region": "Hertfordshire"
+    },
+    "date_of_creation": "2015-09-23",
+    "sic_codes": [
+      "82990"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "10589208",
+    "company_name": "AGILE CONSULTING LONDON LIMITED",
+    "address": {
+      "address_line_1": "Jay Patel & Co",
+      "address_line_2": "278 Northfield Avenue",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "W5 4UB"
+    },
+    "date_of_creation": "2017-01-30",
+    "sic_codes": [
+      "70229"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "16223830",
+    "company_name": "BG RETAIL LONDON LTD",
+    "address": {
+      "address_line_1": "322 Goswell Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "EC1V 7LQ"
+    },
+    "date_of_creation": "2025-02-03",
+    "sic_codes": [
+      "47599"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "15929952",
+    "company_name": "CENTRAL LONDON RETAIL LIMITED",
+    "address": {
+      "address_line_1": "29 Wordsworth Walk",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "NW11 6AU"
+    },
+    "date_of_creation": "2024-09-02",
+    "sic_codes": [
+      "47190"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "04363066",
+    "company_name": "COS OF LONDON (RETAIL) LIMITED",
+    "address": {
+      "address_line_1": "3rd Floor Marlborough House",
+      "address_line_2": "298 Regents Park Road",
+      "country": "England",
+      "locality": "Finchley",
+      "postal_code": "N3 2SZ",
+      "region": "London"
+    },
+    "date_of_creation": "2002-01-29",
+    "sic_codes": [
+      "47791"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "08290082",
+    "company_name": "A & A HEALTHCARE (LONDON) LIMITED",
+    "address": {
+      "address_line_1": "11 Disraeli Close",
+      "locality": "Thamesmead",
+      "postal_code": "SE28 8AP",
+      "region": "London"
+    },
+    "date_of_creation": "2012-11-12",
+    "sic_codes": [
+      "86101"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "16306060",
+    "company_name": "ALLERGY HEALTHCARE LONDON LTD",
+    "address": {
+      "address_line_1": "Ramsay Brown Llp The Brentano Suite",
+      "address_line_2": "Solar House, 915 High Road",
+      "country": "United Kingdom",
+      "locality": "North Finchley",
+      "postal_code": "N12 8QJ",
+      "region": "London"
+    },
+    "date_of_creation": "2025-03-11",
+    "sic_codes": [
+      "86220"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "06135803",
+    "company_name": "CENTRAL LONDON HEALTHCARE CIC",
+    "address": {
+      "address_line_1": "Capital House",
+      "address_line_2": "25 Chapel Street",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "NW1 5DH"
+    },
+    "date_of_creation": "2007-03-05",
+    "sic_codes": [
+      "86210"
+    ],
+    "company_type": "private-limited-guarant-nsc"
+  },
+  {
+    "company_number": "07123966",
+    "company_name": "LONDON CAPITAL ADVISORS LTD",
+    "address": {
+      "address_line_1": "55 Princes Gate Princes Gate",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "SW7 2PN"
+    },
+    "date_of_creation": "2010-01-13",
+    "sic_codes": [
+      "70229"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "10748613",
+    "company_name": "ASHWORTHS OF LONDON (FINANCE) LTD",
+    "address": {
+      "address_line_1": "One Canada Square",
+      "address_line_2": "37th Floor",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "E14 5AB"
+    },
+    "date_of_creation": "2017-05-02",
+    "sic_codes": [
+      "63990",
+      "64922",
+      "68100"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "08448551",
+    "company_name": "NATIONBUILD CONSTRUCTION LIMITED",
+    "address": {
+      "address_line_1": "Zaj Associates 41-A Mill Lane",
+      "address_line_2": "West Hampstead",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "NW6 1NB"
+    },
+    "date_of_creation": "2013-03-18",
+    "sic_codes": [
+      "42990"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "13488413",
+    "company_name": "A&T EC1 LTD",
+    "address": {
+      "address_line_1": "5 Elstree Gate",
+      "address_line_2": "Elstree Way",
+      "country": "United Kingdom",
+      "locality": "Borehamwood",
+      "postal_code": "WD6 1JD",
+      "region": "Hertfordshire"
+    },
+    "date_of_creation": "2021-07-01",
+    "sic_codes": [
+      "64209"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "15375618",
+    "company_name": "CHALFORDS EC1 LTD",
+    "address": {
+      "address_line_1": "6 Lyttelton Road",
+      "address_line_2": "London",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "N2 0EF"
+    },
+    "date_of_creation": "2023-12-29",
+    "sic_codes": [
+      "68209"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "11160175",
+    "company_name": "EC1 ADVISORY LIMITED",
+    "address": {
+      "address_line_1": "28 Queen Elizabeths Walk",
+      "address_line_2": "Queen Elizabeths Walk",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "N16 0HX"
+    },
+    "date_of_creation": "2018-01-19",
+    "sic_codes": [
+      "70229"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "06192048",
+    "company_name": "EC1 BATHROOMS LIMITED",
+    "address": {
+      "address_line_1": "148 Grays Inn Road",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "WC1X 8AX"
+    },
+    "date_of_creation": "2007-03-29",
+    "sic_codes": [
+      "47990"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "16247263",
+    "company_name": "BISHOPSGATE EC2 LTD",
+    "address": {
+      "address_line_1": "35 Grafton Way",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "W1T 5DB"
+    },
+    "date_of_creation": "2025-02-12",
+    "sic_codes": [
+      "96020"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "14118914",
+    "company_name": "CIELO EC2 LTD",
+    "address": {
+      "address_line_1": "14 David Mews",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "W1U 6EQ"
+    },
+    "date_of_creation": "2022-05-19",
+    "sic_codes": [
+      "68209"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "15938710",
+    "company_name": "EC2A LTD",
+    "address": {
+      "address_line_1": "Flat 1 67-70 Charlotte Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "EC2A 3PE"
+    },
+    "date_of_creation": "2024-09-05",
+    "sic_codes": [
+      "96020"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "15890682",
+    "company_name": "EC2 DRIVE LIMITED",
+    "address": {
+      "address_line_1": "27 Old Gloucester Street",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "WC1N 3AX"
+    },
+    "date_of_creation": "2024-08-12",
+    "sic_codes": [
+      "85530"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "16060506",
+    "company_name": "E1 PASTA LIMITED LIMITED",
+    "address": {
+      "address_line_1": "84 Brick Lane",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "E1 6RL"
+    },
+    "date_of_creation": "2024-11-04",
+    "sic_codes": [
+      "56103"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "14011307",
+    "company_name": "AA RUBY E17 LIMITED",
+    "address": {
+      "address_line_1": "95 Claremont Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "E7 0QA",
+      "region": "Greater London"
+    },
+    "date_of_creation": "2022-03-30",
+    "sic_codes": [
+      "68209"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "09640319",
+    "company_name": "ABBEY E15 LTD",
+    "address": {
+      "address_line_1": "115 Craven Park Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "N15 6BL"
+    },
+    "date_of_creation": "2015-06-16",
+    "sic_codes": [
+      "82990"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "13254984",
+    "company_name": "ALBERT ROAD E16 LTD",
+    "address": {
+      "address_line_1": "98 Darenth Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "N16 6ED"
+    },
+    "date_of_creation": "2021-03-09",
+    "sic_codes": [
+      "68100",
+      "68209"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "08212534",
+    "company_name": "BABEL STUDIOS SE1",
+    "address": {
+      "address_line_1": "82 Southwark Bridge Road",
+      "locality": "London",
+      "postal_code": "SE1 0AS"
+    },
+    "date_of_creation": "2012-09-13",
+    "sic_codes": [
+      "68209"
+    ],
+    "company_type": "private-limited-guarant-nsc-limited-exemption"
+  },
+  {
+    "company_number": "12086662",
+    "company_name": "THE BAKEHOUSE SE16 LIMITED",
+    "address": {
+      "address_line_1": "271 Southwark Park Road",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "SE16 3TP"
+    },
+    "date_of_creation": "2019-07-05",
+    "sic_codes": [
+      "56103"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "10492012",
+    "company_name": "B & C NEW CROSS SE14 LTD",
+    "address": {
+      "address_line_1": "28 Alexandra Terrace",
+      "locality": "Exmouth",
+      "postal_code": "EX8 1BD",
+      "region": "Devon"
+    },
+    "date_of_creation": "2016-11-22",
+    "sic_codes": [
+      "82990"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "16131643",
+    "company_name": "BELVEDERE LAND SE19 LIMITED",
+    "address": {
+      "address_line_1": "104 Church Road",
+      "country": "United Kingdom",
+      "locality": "London",
+      "postal_code": "SE19 2UB"
+    },
+    "date_of_creation": "2024-12-11",
+    "sic_codes": [
+      "99999"
+    ],
+    "company_type": "ltd"
+  },
+  {
+    "company_number": "11273603",
+    "company_name": "BLACKHORSE PROPERTIES SE1 LIMITED",
+    "address": {
+      "address_line_1": "29 York Street",
+      "country": "England",
+      "locality": "London",
+      "postal_code": "W1H 1EZ"
+    },
+    "date_of_creation": "2018-03-23",
+    "sic_codes": [
+      "41100"
+    ],
+    "company_type": "ltd"
+  }
+]
